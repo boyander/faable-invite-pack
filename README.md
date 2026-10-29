@@ -32,12 +32,13 @@ process instead of serving the build.
 ### Faable Auth: sign-in and a profile field, no backend
 
 Opening packs is anonymous, and the gallery lives in your browser. **Claim this
-card** on the one you want to keep sends you to the tenant's hosted
+card** on the one you want to keep calls `auth.signIn()`, which sends you to the tenant's hosted
 login (Authorization Code + PKCE, via [`@faable/auth-js`](https://www.npmjs.com/package/@faable/auth-js)),
 and when you come back the card is written to your own profile:
 
 ```js
 await auth.updateProfileField("invite_card", "this-app");
+await auth.getProfileField("invite_card"); // "this-app", on any device you sign in on
 ```
 
 That lands in `user_metadata["faable.com/fields"]`, so the card follows you to any
@@ -46,9 +47,15 @@ does goes from the browser to Faable Auth with the user's access token. Open
 **What this app knows about you** after signing in to see the profile and the
 decoded access token claims.
 
-**Sign out** only ends this app's session (`signOut({ scope: "local" })`). The
-tenant's SSO session stays, so other apps on the same tenant keep you signed in.
-The default, `signOut()`, would end the SSO session for all of them.
+**Sign out** is `signOut()`, which in auth-js 3 ends this app's session only: its
+refresh token is revoked and its storage cleared. The tenant's SSO session stays,
+so other apps on the same tenant keep you signed in. `signOut({ scope: "global" })`
+would end it for all of them.
+
+**Continue to your dashboard** links to `dashboard.faable.com/account/login?sso=1`.
+The dashboard signs in with the same tenant, so with the SSO session this page left
+behind it comes back signed in without asking, straight into creating a first
+project.
 
 All of it is in [`src/auth.js`](src/auth.js) (about 60 lines).
 
