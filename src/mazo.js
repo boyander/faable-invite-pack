@@ -58,3 +58,14 @@ export function sobreAbierto(ed, cartas){
   guardar(ed, h);
   return cartas.some(k => k.nueva);
 }
+
+// start over: clears the history of every edition (seen cards, how often each came out, pending cards)
+export function borrarHistoriales(){
+  try { Object.keys(localStorage).filter(k => k.startsWith("mazo:")).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+}
+
+// ids of the edition's cards that have come out at least once (never resets: it's the gallery)
+export function desbloqueadas(ed){
+  const ids = new Set(ed.cartas.map(c => c.id));
+  return new Set(historial(ed).coleccion.filter(i => ids.has(i)));
+}

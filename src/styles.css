@@ -455,3 +455,66 @@ body.gl3d #cardStage .card-fit{opacity:0}
 .home-links a{color:inherit;font-weight:800;opacity:.8}
 #replay[hidden]{display:none}
 .party.tight .after .cuenta{pointer-events:auto}
+
+/* feature gallery: the cards unlocked so far, with gaps for the rest */
+.home-atajos{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.home-atajos .btn.ghost{font-size:14px;padding:10px 14px;white-space:nowrap}
+.cat-home{display:inline-flex;align-items:center;gap:8px}
+.cat-home small{font-size:12px;font-weight:900;background:rgba(255,255,255,.14);border-radius:999px;padding:2px 8px}
+.cat-home small:empty{display:none}
+.reset-col{border:0;background:none;padding:6px 10px;font-size:13px;font-weight:800;color:rgba(255,255,255,.55);text-decoration:underline;text-underline-offset:3px}
+.reset-col[hidden]{display:none}
+.dialogo[hidden]{display:none}
+.dlg-caja{width:100%;max-width:340px;background:#151c4a;border:2px solid rgba(255,255,255,.15);border-radius:20px;padding:22px 20px 18px;text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.dlg-caja h3{margin:0 0 8px;font:400 26px/1.1 "Luckiest Guy",sans-serif;color:var(--yellow)}
+.dlg-caja p{margin:0 0 18px;font-size:15px;font-weight:600;opacity:.85}
+.dlg-botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.dlg-botones .btn{padding:12px 18px;font-size:15px}
+.btn.peligro{background:#e3350d;color:#fff;box-shadow:0 5px 0 #8f1f06}
+.cat-btn .badge{position:absolute;top:2px;right:2px;width:11px;height:11px;border-radius:50%;background:#e3350d;box-shadow:0 0 0 2px var(--navy),0 0 10px #e3350d}
+body:has(#s-pack.zoomed) .cat-btn{opacity:0;pointer-events:none}
+.catalogo,.cat-visor{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;
+  padding:calc(14px + var(--safe-t)) 16px calc(14px + var(--safe-b));
+  background:radial-gradient(120% 70% at 50% 0%,#26338a 0%,transparent 60%),rgba(11,16,48,.97)}
+.catalogo[hidden],.cat-visor[hidden]{display:none}
+.cat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cat-head h2{margin:0;font:400 30px/1 "Luckiest Guy",sans-serif;color:var(--yellow);-webkit-text-stroke:2px #1f3f8f;paint-order:stroke fill;text-shadow:0 3px 0 #1f3f8f}
+.cat-cerrar{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:rgba(11,16,48,.6);font-size:18px;flex:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tabs::after{content:"";flex:0 0 8px}
+.cat-tab small{background:rgba(255,255,255,.14);border-radius:999px;padding:1px 7px;font-size:12px}
+.cat-tab.on{background:var(--yellow);border-color:var(--yellow);color:#1a1a2e}
+.cat-tab.on small{background:rgba(0,0,0,.15)}
+.cat-prog{display:flex;flex-direction:column;gap:6px;margin:14px 0 12px;font-weight:900;font-size:14px;flex:none}
+.cat-prog i{display:block;height:8px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.cat-prog b{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#ffcb05,#ff9f1c);transition:width .6s cubic-bezier(.2,.9,.3,1)}
+.cat-hueco{position:relative;aspect-ratio:680/950;border:0;padding:0;border-radius:9px;background:none}
+.cat-hueco canvas{width:100%;height:100%;display:block;border-radius:9px;box-shadow:0 6px 14px rgba(0,0,0,.45)}
+.cat-hueco:not(.bloqueada):active{transform:scale(.96)}
+.cat-hueco.bloqueada{border:2px dashed rgba(255,255,255,.22);background:rgba(255,255,255,.04);display:grid;place-items:center;align-content:center;gap:4px;color:rgba(255,255,255,.35)}
+.cat-hueco.bloqueada b{font:400 34px/1 "Luckiest Guy",sans-serif}
+.cat-hueco.bloqueada small{font-family:"Press Start 2P",monospace;font-size:9px}
+.cat-hueco.especial{border-color:transparent;background:linear-gradient(rgba(20,26,70,.95),rgba(20,26,70,.95)) padding-box,
+  linear-gradient(135deg,#ff9ad5,#ffe17a,#8affc1,#7ac8ff,#c49bff) border-box;border-style:solid}
+.cat-hueco.rara{border-color:transparent;background:linear-gradient(rgba(20,26,70,.95),rgba(20,26,70,.95)) padding-box,
+  linear-gradient(135deg,#8e97aa,#eef2fa,#b8c0d0,#ffffff,#8e97aa) border-box;border-style:solid}
+.cat-hueco.nope{animation:nope .35s}
+.cat-visor{align-items:center;justify-content:center;gap:14px;z-index:71}
+.cat-visor .cat-cerrar{position:absolute;z-index:2;top:calc(14px + var(--safe-t));right:16px}
+.cat-marco{position:absolute;inset:0;z-index:0}
+.cat-marco canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.cat-visor .cat-nav,.cat-acciones,.cat-ayuda{position:relative;z-index:2}
+.cat-acciones{display:flex;gap:10px}
+.cat-acciones button{border:2px solid rgba(255,255,255,.25);background:rgba(11,16,48,.7);border-radius:999px;padding:8px 14px;font-weight:900;font-size:14px}
+.cat-acciones button[hidden]{display:none}
+.cat-acciones button:disabled{opacity:.5}
+.cat-visor .cat-nav,.cat-ayuda{transition:opacity .25s}
+.cat-visor.ampliado .cat-nav,.cat-visor.ampliado .cat-ayuda{opacity:0;pointer-events:none}
+.cat-nav{display:flex;align-items:center;gap:14px;font-weight:900;font-size:16px;text-align:center}
+.cat-nav button{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);font-size:26px;line-height:1;flex:none}
+.cat-nav button:disabled{opacity:.25}
+.cat-ayuda{margin:0;font-size:13px;opacity:.6;font-weight:700}
+@media (max-height:720px){
+  .home-atajos{margin-top:6px}
+  .home-atajos .btn.ghost{padding:9px 13px}}

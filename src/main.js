@@ -8,6 +8,7 @@ import { drawCarta, cargarFoto, rareza } from "./carta.js";
 import { DPR3, drawCardBack, fuentesCargadas } from "./texturas.js";
 import { initPack3D } from "./pack3d.js";
 import * as cuenta from "./auth.js";
+import { crearGaleria } from "./galeria.js";
 
 const $ = s => document.querySelector(s);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -526,7 +527,7 @@ function pintarMano(){
         minis.set(k, c);
       }
       el.append(minis.get(k));
-      if (k.nueva) el.insertAdjacentHTML("beforeend", "<b>NUEVA</b>");
+      if (k.nueva) el.insertAdjacentHTML("beforeend", "<b>NEW</b>");
     } else el.append(miniReverso());
     box.append(el);
   });
@@ -541,6 +542,7 @@ const edicionesListas = fetch("ediciones.json", {cache: "no-store"}).then(r => r
   if (eds.length) EDICIONES = eds;
   edicion = EDICIONES[0];
   if (!opened) elegirCarta();
+  galeria.contar();
 }).catch(e => console.warn("No ediciones.json:", e));
 // a card claimed with Faable Auth always comes out of the pack; otherwise mazo.js draws one (rare ones less often)
 function cartaReclamada(){
@@ -556,7 +558,7 @@ function elegirCarta(){
   document.querySelector(".pack-logo").textContent = ed.titulo;
   document.querySelector(".pack-label small").textContent = ed.etiqueta.replace(/\*/g, "★");
   document.querySelector(".pack-label b").textContent = ed.l1 + " " + ed.l2;
-  document.querySelector(".back-body b").innerHTML = ed.dorso + "<br>1 CARD";
+  document.querySelector(".back-body b").innerHTML = ed.dorso + "<br>" + (ed.porSobre > 1 ? ed.porSobre + " CARDS" : "1 CARD");
   document.querySelectorAll(".card-back").forEach(b => { b.firstElementChild.innerHTML = "FAABLE<br>" + ed.corto; b.lastElementChild.textContent = ed.numero.replace(/\*/g, "★"); });
   document.dispatchEvent(new Event("carta")); // the 3D module redraws pack, card back and card face
 }
@@ -569,15 +571,18 @@ function pintarCartaHTML(){
 }
 document.addEventListener("carta", pintarCartaHTML);
 function cartaAbierta(){
-  if (sobre.length && !cuenta.estado.reclamada) sobreAbierto(edicion, sobre);
+  if (sobre.length && !cuenta.estado.reclamada && sobreAbierto(edicion, sobre)) galeria.nueva();
   setTimeout(() => precargar([edicion]), 6000); // the next pack's art, while this one is revealed
 }
 function textosFiesta(){
   $(".note").textContent = "";
-  $("#replay").textContent = edicion.boton;
+  $("#replay").textContent = quedan() ? `Next card (${iCarta + 2}/${sobre.length}) ›` : edicion.boton;
+  $("#replay").classList.toggle("siguiente", quedan() > 0);
   $("#replay").hidden = !!cuenta.estado.reclamada; // one card per account: a claimed card is yours
   pintarCuenta();
 }
+const galeria = crearGaleria({edicion: () => edicion, sonido: SFX,
+  alReiniciar(){ SFX.whoosh(); toast("Gallery cleared: collect them all again"); if (!opened) elegirCarta(); }});
 let toastT;
 function toast(t){
   const el = $("#toast"); el.textContent = t; el.classList.add("on");
@@ -628,17 +633,6 @@ stage.addEventListener("pointerdown", e => { if (flipped) aimAt(e); });
   requestAnimationFrame(tiltLoop);
 })(0);
 
-// immersive mode: can only be requested inside a tap (Android allows it; iPhone doesn't outside videos)
-function goImmersive(){
-  if (instalada()) return; // an installed (home screen) app is already full screen
-  const el = document.documentElement;
-  const req = el.requestFullscreen || el.webkitRequestFullscreen;
-  if (!req || document.fullscreenElement || document.webkitFullscreenElement) return;
-  try {
-    const p = req.call(el, {navigationUI: "hide"});
-    if (p && p.then) p.then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock("portrait").catch(() => {})).catch(() => {});
-  } catch (e) {}
-}
 function startReady(){
   const b = $("#start");
   if (!b.disabled) return;
@@ -665,8 +659,7 @@ edicionesListas.then(() => initPack3D(app3d)).then(api => {
 function precargar(eds){
   return Promise.all(eds.flatMap(ed => sobrePendiente(ed).map(k => k.d.foto && cargarFoto(k.d.foto).catch(() => {}))));
 }
-const instalada = () => matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches || navigator.standalone === true;
-$("#start").onclick = () => { goImmersive(); startMusic(); SFX.powerUp(); resetPack(); pack3d?.entrar("caida"); show("s-pack"); };
+$("#start").onclick = () => { startMusic(); SFX.powerUp(); resetPack(); pack3d?.entrar("caida"); show("s-pack"); };
 
 // the session comes back from the login (or from storage): the cover says who you are and what you claimed
 cuenta.listo.then(() => {

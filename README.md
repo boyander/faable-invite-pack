@@ -1,11 +1,12 @@
 # Faable Invite Pack
 
-Open a pack, tear it, flip the card. Each card is one feature of
+Open a pack, tear it, flip three cards. Each card is one feature of
 [Faable Deploy](https://faable.com/docs/deploy) or [Faable Auth](https://faable.com/docs/auth),
 and the app itself is a demo of both: it's a static Vite SPA deployed on Faable, and
-claiming your card signs you in with Faable Auth.
+claiming a card signs you in with Faable Auth. Collect all eight in the feature
+gallery (📖).
 
-**Live:** https://invite.faable.link _(you don't need an account to open a pack)_
+**Live:** https://invite.faable.com _(you don't need an account to open a pack)_
 
 <!-- screenshot -->
 
@@ -30,12 +31,13 @@ process instead of serving the build.
 
 ### Faable Auth: sign-in and a profile field, no backend
 
-Opening a pack is anonymous. **Claim this card** sends you to the tenant's hosted
+Opening packs is anonymous, and the gallery lives in your browser. **Claim this
+card** on the one you want to keep sends you to the tenant's hosted
 login (Authorization Code + PKCE, via [`@faable/auth-js`](https://www.npmjs.com/package/@faable/auth-js)),
 and when you come back the card is written to your own profile:
 
 ```js
-await auth.updateProfile({ fields: [{ key: "invite_card", value: "this-app" }] });
+await auth.updateProfileField("invite_card", "this-app");
 ```
 
 That lands in `user_metadata["faable.com/fields"]`, so the card follows you to any
@@ -54,15 +56,16 @@ What the tenant needs:
 | Allowed callback URL | `https://<your-app>.faable.link/` |
 | Allowed logout URL | `https://<your-app>.faable.link/` |
 | Allowed web origin | `https://<your-app>.faable.link` |
-| Profile fields | `invite_card` (string), so users may write it on themselves |
+| Profile fields | `invite_card`, an enum of the card ids, so users may write it on themselves and nothing else |
 
 Then put the domain and client id in [`src/config.js`](src/config.js). They're
 public: an SPA sends both to `/authorize` anyway.
 
 **"One card per account" is only a UI rule.** A profile field is writable by its
-user, so anyone with a token can change theirs with a `curl`. That's fine for a
-demo card. For anything that must hold up, check it on a server that validates the
-token, or keep it somewhere users can't write.
+user, so anyone with a token can switch their card with a `curl` (only to another
+valid card id: the field is an enum). That's fine for a demo card. For anything
+that must hold up, check it on a server that validates the token, or keep it
+somewhere users can't write.
 
 ## Run it locally
 
@@ -79,11 +82,12 @@ client's callback and logout URLs and `http://localhost:5173` to its web origins
 
 | File | What it does |
 |---|---|
-| `src/main.js` | The flow: cover → pack → card → claim |
+| `src/main.js` | The flow: cover → pack → three cards → claim |
+| `src/galeria.js`, `src/visor3d.js` | The feature gallery and its 3D card viewer |
 | `src/auth.js` | Faable Auth: session, claim, sign out, claims panel |
 | `src/pack3d.js`, `src/shaders.js`, `src/material.js` | The 3D pack and holographic card (three.js) |
 | `src/carta.js`, `src/texturas.js` | Card face, pack and card back, drawn on canvas |
-| `src/mazo.js` | Which card a pack holds (rare cards come out less often) |
+| `src/mazo.js` | Which cards a pack holds (new and common ones come out more often) |
 | `public/ediciones.json` | The cards: text, product, rarity |
 | `public/art/` | Card illustrations (SVG) |
 

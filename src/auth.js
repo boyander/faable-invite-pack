@@ -1,5 +1,5 @@
 /* Faable Auth for a static SPA: Authorization Code + PKCE with @faable/auth-js, no backend.
-   The claimed card is stored on the user's own profile (user_metadata["faable.com/fields"]) with updateProfile, so it
+   The claimed card is stored on the user's own profile (user_metadata["faable.com/fields"]) with updateProfileField, so it
    follows them to any device they sign in on. The field must be declared in the client's profile_fields. */
 import { createClient } from "@faable/auth-js";
 import { AUTH_DOMAIN, AUTH_CLIENT_ID } from "./config.js";
@@ -31,7 +31,7 @@ export const listo = (async () => {
     const pendiente = leer(PENDIENTE);
     // first sign-in after claiming: the card goes to the profile. An account that already has one keeps it
     if (!estado.reclamada && pendiente) {
-      const {data: user, error} = await auth.updateProfile({fields: [{key: CAMPO, value: pendiente}]});
+      const {data: user, error} = await auth.updateProfileField(CAMPO, pendiente);
       if (error) console.warn("Could not save the card:", error);
       else { estado.user = {...estado.user, ...user}; estado.reclamada = campo(user) || pendiente; estado.recienReclamada = true; }
     }
