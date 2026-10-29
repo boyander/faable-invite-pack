@@ -45,6 +45,10 @@ export function reclamar(id){
   auth.signInWithOauthConnection({});
 }
 
+// the dashboard signs in with the same tenant: ?sso=1 sends it to /authorize at once, and the SSO session this app
+// left there brings the user back already signed in, ready to create their first project
+export const DASHBOARD = "https://dashboard.faable.com/account/login?sso=1";
+
 // signs out of this app only: the tenant's SSO session stays, so other apps on it (the dashboard, here) keep theirs.
 // The next "Claim" goes back in without asking; signOut() with the default global scope would end them all
 export async function salir(){

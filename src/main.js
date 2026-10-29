@@ -600,7 +600,8 @@ function pintarCuenta(){
     $("#reclamar").onclick = () => { SFX.tap(); cuenta.reclamar(carta.d.id); };
     return;
   }
-  box.innerHTML = `<p class="cuenta-ok">${mia ? "✓ Saved to your Faable Auth profile" : "Signed in"} as <b>${esc(e.user.email || e.user.name || e.user.sub)}</b></p>
+  box.innerHTML = `<a class="btn" href="${cuenta.DASHBOARD}">Continue to your dashboard →</a>
+    <p class="cuenta-ok">${mia ? "✓ Saved to your Faable Auth profile" : "Signed in"} as <b>${esc(e.user.email || e.user.name || e.user.sub)}</b></p>
     <details class="claims"><summary>What this app knows about you</summary><pre id="claims">…</pre></details>
     <button class="btn ghost" id="salir">Sign out</button>`;
   $("#salir").onclick = () => { SFX.tap(); cuenta.salir(); };
@@ -669,6 +670,7 @@ cuenta.listo.then(() => {
       ? `Welcome back, ${e.user.name || e.user.email}. Your card is saved in your Faable Auth profile, on every device you sign in on.`
       : `Signed in as ${e.user.email || e.user.name}.`;
     if (e.recienReclamada) toast("✓ Card saved to your profile");
+    $("#irDashboard").hidden = false;
   }
   if (!$("#start").disabled) etiquetaInicio();
   if (!opened) elegirCarta();

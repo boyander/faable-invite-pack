@@ -1,19 +1,27 @@
 /* Textures for the pack and the card back, drawn on a 2D canvas with the same fonts as the page */
 import { rrect } from "./carta.js";
 
-// invite seal: gradient disc, ring and the Faable F
+// the Faable logo (the same paths as public/logo.svg, in a 1024 box), size px wide, centred on cx, cy
+export function logo2d(x, cx, cy, size){
+  const k = size / 1024, X = v => cx + (v - 512) * k, Y = v => cy + (v - 512) * k;
+  const shape = (pts, g0, g1, c0, c1) => {
+    const g = x.createLinearGradient(X(g0[0]), Y(g0[1]), X(g1[0]), Y(g1[1]));
+    g.addColorStop(0, c0); g.addColorStop(1, c1);
+    x.beginPath(); pts.forEach(([a, b], i) => i ? x.lineTo(X(a), Y(b)) : x.moveTo(X(a), Y(b))); x.closePath();
+    x.fillStyle = g; x.fill();
+  };
+  shape([[204, 410], [614, 0], [819, 205], [409, 614]], [300, 520], [720, 100], "#b321e3", "#33c4ff");
+  shape([[204, 819], [614, 410], [819, 614], [409, 1024]], [300, 930], [560, 680], "#33c4ff", "#b321e3");
+}
+// invite seal: white disc with the Faable logo
 function emblem2d(x, cx, cy, r){
   x.save();
-  const g = x.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
-  g.addColorStop(0, "#7ad3ff"); g.addColorStop(.5, "#5b5bf0"); g.addColorStop(1, "#b24bf3");
-  x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fillStyle = g; x.fill();
+  x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fillStyle = "#fff"; x.fill();
   const sh = x.createRadialGradient(cx - r * .4, cy - r * .4, r * .1, cx, cy, r);
-  sh.addColorStop(0, "rgba(255,255,255,.35)"); sh.addColorStop(1, "rgba(0,0,0,.18)");
+  sh.addColorStop(0, "rgba(255,255,255,0)"); sh.addColorStop(1, "rgba(20,10,60,.16)");
   x.fillStyle = sh; x.fill();
-  x.lineWidth = r * .09; x.strokeStyle = "#fff"; x.stroke();
-  x.beginPath(); x.arc(cx, cy, r * .8, 0, Math.PI * 2); x.lineWidth = r * .03; x.strokeStyle = "rgba(255,255,255,.6)"; x.stroke();
-  x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
-  x.font = `${Math.round(r * 1.15)}px "Luckiest Guy"`; x.fillText("F", cx + r * .03, cy + r * .1);
+  x.lineWidth = r * .07; x.strokeStyle = "rgba(255,255,255,.9)"; x.stroke();
+  logo2d(x, cx, cy, r * 1.25);
   x.restore();
 }
 function rays2d(x, cx, cy, r, color, n, on){

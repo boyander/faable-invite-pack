@@ -123,11 +123,10 @@ h1{font-size:clamp(30px,9vw,44px);
   text-shadow:0 4px 0 #1f3f8f,0 8px 20px rgba(0,0,0,.4)}
 .lead{font-size:16px;font-weight:600;opacity:.85;margin:0;max-width:340px}
 
-/* invite seal (the Faable F) */
-.emblem{--s:84px;width:var(--s);height:var(--s);border-radius:50%;position:relative;flex:none;display:grid;place-items:center;
-  background:linear-gradient(135deg,#7ad3ff,#5b5bf0 50%,#b24bf3);border:4px solid #fff;
-  box-shadow:inset -8px -8px 0 rgba(0,0,0,.15),0 10px 30px rgba(0,0,0,.4)}
-.emblem::after{content:"F";font:400 calc(var(--s)*.55)/1 "Luckiest Guy",sans-serif;color:#fff;transform:translateY(8%)}
+/* invite seal: the Faable logo on a white disc */
+.emblem{--s:84px;width:var(--s);height:var(--s);border-radius:50%;position:relative;flex:none;
+  background:#fff url(/logo.svg) center/62% no-repeat;border:4px solid #fff;
+  box-shadow:inset -6px -6px 0 rgba(20,10,60,.08),0 10px 30px rgba(0,0,0,.4)}
 .radar{position:relative;display:grid;place-items:center;margin:14px 0 6px}
 .radar::before,.radar::after{content:"";position:absolute;width:84px;height:84px;border-radius:50%;border:2px solid var(--yellow);animation:ping 2.2s ease-out infinite}
 .radar::after{animation-delay:1.1s}
@@ -518,3 +517,6 @@ body:has(#s-pack.zoomed) .cat-btn{opacity:0;pointer-events:none}
 @media (max-height:720px){
   .home-atajos{margin-top:6px}
   .home-atajos .btn.ghost{padding:9px 13px}}
+a.btn{text-decoration:none;display:inline-block;text-align:center}
+#irDashboard{margin-top:12px}
+#irDashboard[hidden]{display:none}
