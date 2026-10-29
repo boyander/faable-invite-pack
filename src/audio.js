@@ -1,4 +1,4 @@
-/* ===== SONIDO: todo sintetizado; arranca con el primer toque (política de autoplay) ===== */
+/* ===== SOUND: all synthesized; starts on the first tap (autoplay policy) ===== */
 const MUSIC_VOL = .32;
 export let muted = false;
 try { muted = localStorage.getItem("muted") === "1"; } catch (e) {}
@@ -14,7 +14,7 @@ export function audio(){
       const d = noiseBuf.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
-    if (actx.state === "suspended" && !inBackground) actx.resume(); // nunca reanudar con la app en segundo plano
+    if (actx.state === "suspended" && !inBackground) actx.resume(); // never resume while the app is in the background
   } catch (e) { actx = null; }
   return actx;
 }
@@ -36,11 +36,11 @@ export function tone(freq, at = 0, dur = .12, type = "square", vol = .06, slideT
   const a = audio(); if (!a) return;
   note(freq, a.currentTime + at, dur, type, vol, sfxBus, slideTo);
 }
-export function ripSound(vol, len = .07){ // ruido filtrado = papel rasgándose
+export function ripSound(vol, len = .07){ // filtered noise = tearing paper
   const a = audio(); if (!a) return;
   noise(a.currentTime, len, .35 * vol, "bandpass", 1500 + Math.random() * 2000, sfxBus);
 }
-export function duck(level, ms){ // baja la música mientras suena una fanfarria
+export function duck(level, ms){ // lowers the music while a fanfare plays
   if (!actx) return;
   musicBus.gain.setTargetAtTime(MUSIC_VOL * level, actx.currentTime, .08);
   setTimeout(() => musicBus.gain.setTargetAtTime(MUSIC_VOL, actx.currentTime, .4), ms);
@@ -52,26 +52,26 @@ export const SFX = {
   thud(){ tone(160, 0, .18, "sine", .25, 60); },
   powerUp(){ [60, 64, 67, 72, 76, 79, 84].forEach((m, i) => tone(hz(m), i * .045, .1, "square", .04)); },
   fail(){ duck(.15, 2200); [67, 63, 60, 55].forEach((m, i) => tone(hz(m), i * .28, .32, "triangle", .12)); tone(hz(43), 1.12, .7, "sawtooth", .05, hz(36)); },
-  // la carta boca abajo brilla con su rareza: un murmullo de campanillas que sube (más largo y alto si es especial)
+  // the face-down card glows with its rarity: a rising murmur of chimes (longer and louder if it's special)
   presagio(especial){ const n = especial ? 12 : 7; for (let i = 0; i < n; i++) tone(hz(76 + i * (especial ? 2 : 1.5)), i * .06, .3, "sine", .035); },
-  rara(){ // carta rara: dos acordes plateados y campanillas
+  rara(){ // rare card: two silvery chords and chimes
     [[76, 0], [79, 0], [83, 0], [78, .16], [81, .16], [86, .16]].forEach(([m, at]) => tone(hz(m), at, .55, "triangle", .05));
     for (let i = 0; i < 6; i++) tone(hz(96 + (i % 3) * 3), .3 + i * .06, .2, "sine", .03);
   },
   shimmer(){ for (let i = 0; i < 14; i++) tone(hz(72 + i * 2), i * .035, .18, "triangle", .05); this.whoosh(); },
-  fanfare(){ // fanfarria propia: arpegio ascendente y acorde final
+  fanfare(){ // our own fanfare: rising arpeggio and a final chord
     duck(.2, 3200);
     [[67,0,.1],[72,.1,.1],[76,.2,.1],[79,.3,.3],[77,.62,.1],[79,.72,.1],[81,.82,.3],[79,1.14,.1],[84,1.24,1]]
       .forEach(([m, at, d]) => { tone(hz(m), at, d, "square", .07); tone(hz(m - 12), at, d, "triangle", .1); });
   },
-  legendario(){ // carta especial: golpe grave, barrido que sube, acorde épico que crece, metales y campanillas
+  legendario(){ // special card: low hit, rising sweep, swelling epic chord, brass and chimes
     const a = audio(); if (!a) return;
     duck(.1, 3800);
     const t = a.currentTime;
     note(110, t, .9, "sine", .5, sfxBus, 38);
     noise(t, .5, .25, "lowpass", 300, sfxBus);
     for (let i = 0; i < 8; i++) noise(t + .05 + i * .055, .12, .05, "bandpass", 600 * 1.35 ** i, sfxBus, 2);
-    // acorde de Re mayor con sierras desafinadas que se abren (filtro) y crecen despacio
+    // D major chord of detuned saws that open up (filter) and swell slowly
     const pad = (m, at, dur, vol) => {
       for (const det of [-8, 8]) {
         const o = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain(), s0 = t + at;
@@ -90,13 +90,13 @@ export const SFX = {
   },
 };
 
-/* música de fondo: bucle chiptune original en Do mayor (I–V–vi–IV y puente) */
+/* background music: original chiptune loop in C major (I–V–vi–IV plus a bridge) */
 const MELODY = [
   72,76,79,76, 77,76,74,72,  74,0,71,74, 79,0,77,76,  76,72,69,72, 76,79,81,79,  77,76,74,72, 74,0,72,0,
   77,77,81,77, 76,76,79,76,  74,74,77,74, 72,74,76,79,  79,76,72,76, 79,84,79,76,  74,71,67,71, 74,0,0,0,
 ];
 const BASS = [48, 43, 45, 41, 41, 43, 48, 43];
-const STEP = 60 / 138 / 2; // corcheas a 138 bpm
+const STEP = 60 / 138 / 2; // eighth notes at 138 bpm
 let musicOn = false, musicT = 0, musicStep = 0;
 export function startMusic(){
   const a = audio(); if (!a || musicOn) return;
@@ -106,17 +106,17 @@ export function startMusic(){
       const s = musicStep, t = musicT, m = MELODY[s], root = BASS[s >> 3];
       if (m) { note(hz(m), t, STEP * .85, "square", .09, musicBus); note(hz(m + 12), t, STEP * .5, "triangle", .03, musicBus); }
       note(hz(s % 2 ? root + 12 : root), t, STEP * .8, "triangle", .22, musicBus);
-      if (s % 4 === 0) note(150, t, .12, "sine", .35, musicBus, 40);           // bombo
-      if (s % 8 === 4) noise(t, .1, .12, "bandpass", 2000, musicBus);         // caja
-      if (s % 2 === 1) noise(t, .03, .05, "highpass", 7000, musicBus);        // charles
+      if (s % 4 === 0) note(150, t, .12, "sine", .35, musicBus, 40);           // kick
+      if (s % 8 === 4) noise(t, .1, .12, "bandpass", 2000, musicBus);         // snare
+      if (s % 2 === 1) noise(t, .03, .05, "highpass", 7000, musicBus);        // hi-hat
       musicStep = (s + 1) % MELODY.length; musicT += STEP;
     }
   }, 25);
 }
-// iOS: que el sonido salga aunque el interruptor de silencio esté activado
+// iOS: play sound even when the silent switch is on
 try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
 document.addEventListener("click", startMusic, {once: true});
-// en móvil, al salir de la app no siempre llega visibilitychange (navegadores dentro de WhatsApp, etc.): se escuchan todos
+// on mobile, leaving the app doesn't always fire visibilitychange (in-app browsers like WhatsApp's, etc.): listen to all of them
 let inBackground = false;
 function setBackground(bg){
   inBackground = bg;

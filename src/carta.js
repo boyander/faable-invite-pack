@@ -1,17 +1,17 @@
-/* Diseño de las cartas (680×950 unidades de diseño): foto o ilustración, textos y colores de cada carta de ediciones.json.
-   La usan el sobre 3D (textura), la carta HTML de reserva y el editor. */
+/* Card layout (680×950 design units): photo or illustration, texts and colors of each card in ediciones.json.
+   Used by the 3D pack (texture) and the fallback HTML card. */
 
 export const W = 680, H = 950;
-export const ART = [52, 140, 576, 344]; // hueco de la foto (x, y, ancho, alto)
-// la misma zona con marco, en coordenadas de textura (u0, v0, u1, v1): ahí va el holográfico de la carta 3D
+export const ART = [52, 140, 576, 344]; // photo slot (x, y, width, height)
+// the same area including its frame, in texture coordinates (u0, v0, u1, v1): where the 3D card's holo goes
 export const ART_UV = [44 / W, 1 - 492 / H, 636 / W, 1 - 132 / H];
-// paralaje (solo en las cartas especiales): en 3D la foto va en su propia textura, con PARALAJE de margen por cada lado, y el shader la desplaza según
-// desde dónde se mira la carta (parece hundida tras el marco). FOTO_UV: el hueco de la foto en coordenadas de textura
+// parallax (special cards only): in 3D the photo gets its own texture, with PARALAJE of margin on each side, and the shader shifts it
+// depending on where the card is viewed from (it looks sunk behind the frame). FOTO_UV: the photo slot in texture coordinates
 export const PARALAJE = .12;
 export const FOTO_UV = [52 / W, 1 - 484 / H, 628 / W, 1 - 140 / H];
 
 const P = d => new Path2D(d);
-// icono de cada producto, dibujado en una caja de 24×24
+// icon of each product, drawn in a 24×24 box
 export const TIPOS = {
   deploy: {nombre: "Deploy", c: ["#7ad3ff", "#1e6fd8"], bg: ["#eef7ff", "#c9e4ff"], icon: P("M12 2l7 8h-4v6H9v-6H5z M5 18h14v3H5z")},
   auth:   {nombre: "Auth",   c: ["#d9a6ff", "#7a2bd8"], bg: ["#f7efff", "#e2ccff"], icon: P("M7 7a5 5 0 1 0 4.6 7H15v3h3v-3h4v-4H11.6A5 5 0 0 0 7 7zm0 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z")},
@@ -20,9 +20,9 @@ export const TIPOS = {
   normal: {nombre: "Faable", c: ["#e6e6e6", "#8a8fa8"], bg: ["#f4f5fb", "#dde0ee"], icon: P("M12 2l3 7 7 .6-5.3 4.6 1.6 7.1L12 17.6 5.7 21.3l1.6-7.1L2 9.6 9 9z")},
 };
 
-// rareza de cada carta: peso en el sorteo (mazo.js), estrellas del número y, en 3D, marco (uBorde: plateado o
-// holográfico), tono del aura (base dorada o plateada y cuánto arcoíris) y brillo del reverso antes de voltearla.
-// En ediciones.json va en "rareza" ("rara" o "especial"; sin el campo, común); "especial": true es el formato antiguo
+// rarity of each card: weight in the draw (mazo.js), stars next to the number and, in 3D, frame (uBorde: silver or
+// holo), aura tint (gold or silver base and how much rainbow) and card-back glow before flipping it.
+// In ediciones.json it goes in "rareza" ("rara" or "especial"; no field means common); "especial": true is the old format
 export const RAREZAS = {
   comun:    {nombre: "Común",    peso: 1,   estrellas: "★",   borde: 0,  aura: [1, .78, .3],  iris: .55, brillo: 0},
   rara:     {nombre: "Rara",     peso: .5,  estrellas: "★★",  borde: .5, aura: [.6, .82, 1],  iris: .3,  brillo: .8},
@@ -41,7 +41,7 @@ export function energia(x, cx, cy, r, tipo){
   x.save(); x.translate(cx - r * .62, cy - r * .62); x.scale(r / 19, r / 19); x.fillStyle = "#fff"; x.fill(t.icon, "evenodd"); x.restore();
 }
 
-// parte el texto en líneas que caben en `max` (respetando los saltos de línea); si no cabe en `n`, la última acaba en "…"
+// splits the text into lines that fit in `max` (keeping line breaks); if it doesn't fit in `n`, the last one ends in "…"
 function lineas(x, txt, max, n){
   const out = [];
   for (const parrafo of String(txt || "").split("\n")) {
@@ -60,29 +60,29 @@ function lineas(x, txt, max, n){
   return out;
 }
 
-// recorte "cover" de la foto centrado en `foco` (0..1) con `zoom` ≥ 1
+// "cover" crop of the photo centered on `foco` (0..1) with `zoom` ≥ 1
 export function encuadre(img, foco = [.5, .4], zoom = 1){
   const [, , aw, ah] = ART, iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
   const sc = Math.max(aw / iw, ah / ih) * Math.max(1, zoom || 1), sw = aw / sc, sh = ah / sc;
   const cl = (v, a, b) => Math.min(b, Math.max(a, v));
   return [cl(foco[0] * iw - sw / 2, 0, iw - sw), cl(foco[1] * ih - sh / 2, 0, ih - sh), sw, sh];
 }
-// el foco que de verdad se ve: si la foto no tiene margen en un eje, el foco de ese eje no puede moverse
+// the focus actually visible: if the photo has no slack on an axis, the focus can't move on that axis
 export function focoVisible(img, foco, zoom){
   const [sx, sy, sw, sh] = encuadre(img, foco, zoom), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
   const r = v => Math.round(v * 1000) / 1000;
   return [r((sx + sw / 2) / iw), r((sy + sh / 2) / ih)];
 }
 
-/* dibuja la carta `d` en el canvas `c`. o: {num, total, scale} */
+/* draws card `d` on canvas `c`. o: {num, total, scale} */
 export function drawCarta(c, d, img, o = {}){
   const s = o.scale || 1;
   c.width = Math.round(W * s); c.height = Math.round(H * s);
   const x = c.getContext("2d"); x.setTransform(s, 0, 0, s, 0, 0);
   const t = TIPOS[d.tipo] || TIPOS.normal, col = d.colores || {};
-  const fondo = col.fondo || t.bg, arte = col.arte || t.c; // colores propios de la carta, si los tiene
-  // marco amarillo, plateado si es rara o lámina arcoíris si es especial (en 3D además se mueven con la inclinación)
-  // y fondo del color del tipo
+  const fondo = col.fondo || t.bg, arte = col.arte || t.c; // the card's own colors, if it has any
+  // yellow frame, silver if rare or rainbow foil if special (in 3D they also shift with the tilt)
+  // and a background in the type's color
   const rz = rareza(d);
   let g = x.createLinearGradient(0, 0, W, H);
   if (rz === "especial") ["#ff9ad5", "#ffe17a", "#8affc1", "#7ac8ff", "#c49bff", "#ff9ad5", "#ffe17a"].forEach((c, i, a) => g.addColorStop(i / (a.length - 1), c));
@@ -97,7 +97,7 @@ export function drawCarta(c, d, img, o = {}){
   g = x.createLinearGradient(0, 20, 0, H - 20); g.addColorStop(0, fondo[0]); g.addColorStop(1, fondo[1]);
   rrect(x, 20, 20, W - 40, H - 40, 20); x.fillStyle = g; x.fill();
   x.textBaseline = "alphabetic"; x.fillStyle = "#1a1a2e";
-  // cabecera: producto, nombre e icono del producto
+  // header: product, name and product icon
   x.textAlign = "left"; x.font = '900 18px Nunito';
   const fase = String(d.fase || "Faable").toUpperCase(), pill = x.measureText(fase).width + 20;
   g = x.createLinearGradient(0, 44, 0, 72); g.addColorStop(0, arte[0]); g.addColorStop(1, arte[1]);
@@ -106,19 +106,19 @@ export function drawCarta(c, d, img, o = {}){
   energia(x, 612, 100, 22, d.tipo);
   x.fillStyle = "#1a1a2e"; x.font = '900 42px Nunito';
   x.fillText(d.nombre || "", 44, 116, 540);
-  // foto con marco plateado
+  // photo with a silver frame
   const [ax, ay, aw, ah] = ART;
   g = x.createLinearGradient(44, 132, 636, 492); g.addColorStop(0, "#c9c9c9"); g.addColorStop(.5, "#fff"); g.addColorStop(1, "#9a9a9a");
   x.fillStyle = g; x.fillRect(ax - 8, ay - 8, aw + 16, ah + 16);
   g = x.createRadialGradient(340, 312, 10, 340, 312, 330); g.addColorStop(0, arte[0]); g.addColorStop(1, arte[1]);
   x.fillStyle = g; x.fillRect(ax, ay, aw, ah);
   if (img) x.drawImage(img, ...encuadre(img, d.foco, d.zoom), ax, ay, aw, ah);
-  // franja del color del producto
+  // band in the product's color
   g = x.createLinearGradient(44, 0, 636, 0); g.addColorStop(0, arte[1]); g.addColorStop(.5, arte[0]); g.addColorStop(1, arte[1]);
   rrect(x, 44, 500, 592, 30, 6); x.fillStyle = g; x.fill();
   x.textAlign = "center"; x.fillStyle = "#fff"; x.font = '800 18px Nunito';
   x.fillText(d.franja || "", 340, 521, 576);
-  // features (una o dos)
+  // features (one or two)
   const ataques = (d.ataques || []).filter(a => a && (a.nombre || a.texto)).slice(0, 2);
   const ataque = (y, a, n) => {
     const coste = Math.min(3, Math.max(0, a.coste ?? 1));
@@ -138,7 +138,7 @@ export function drawCarta(c, d, img, o = {}){
     x.fillStyle = "rgba(0,0,0,.2)"; x.fillRect(44, 668, 592, 3);
     ataque(714, ataques[1], 2);
   }
-  // pie: cómo probarlo y número de colección
+  // footer: how to try it and the card number
   x.textAlign = "left"; x.font = 'italic 700 20px Nunito'; x.fillStyle = "rgba(26,26,46,.85)";
   const pie = lineas(x, d.pie, 440, 2);
   pie.forEach((l, i) => x.fillText(l, 44, 902 - (pie.length - 1 - i) * 24));
@@ -148,9 +148,9 @@ export function drawCarta(c, d, img, o = {}){
   }
 }
 
-// la foto del hueco con su margen de paralaje (el mismo encuadre que en la carta, agrandado por cada lado; donde la foto
-// no llega queda el fondo de la ilustración). escala: píxeles por unidad de diseño.
-// Devuelve cuánto se puede desplazar hacia cada lado sin salirse de la foto [izq, der, abajo, arriba] (en la textura)
+// the slot's photo with its parallax margin (same framing as on the card, enlarged on each side; where the photo
+// doesn't reach, the illustration background shows). escala: pixels per design unit.
+// Returns how far it can shift to each side without leaving the photo [left, right, bottom, top] (in the texture)
 export function drawFoto(c, d, img, escala){
   const [, , aw, ah] = ART, k = 1 + 2 * PARALAJE, cw = Math.round(aw * k * escala), ch = Math.round(ah * k * escala);
   if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; }
@@ -160,14 +160,14 @@ export function drawFoto(c, d, img, escala){
   if (!img) return [0, 0, 0, 0];
   const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
   const [sx, sy, sw, sh] = encuadre(img, d.foco, d.zoom), ex = sw * PARALAJE, ey = sh * PARALAJE;
-  const X0 = sx - ex, Y0 = sy - ey, WW = sw + 2 * ex, HH = sh + 2 * ey; // lo que se quiere (puede salirse de la foto)
+  const X0 = sx - ex, Y0 = sy - ey, WW = sw + 2 * ex, HH = sh + 2 * ey; // what we want (may go past the photo)
   const a = Math.max(0, X0), b = Math.max(0, Y0), a2 = Math.min(iw, X0 + WW), b2 = Math.min(ih, Y0 + HH);
   if (a2 > a && b2 > b) x.drawImage(img, a, b, a2 - a, b2 - b, (a - X0) / WW * cw, (b - Y0) / HH * ch, (a2 - a) / WW * cw, (b2 - b) / HH * ch);
-  const m = (v, t) => Math.max(0, v - 1) / t; // un píxel de holgura
+  const m = (v, t) => Math.max(0, v - 1) / t; // one pixel of slack
   return [m(sx - a, WW), m(a2 - sx - sw, WW), m(b2 - sy - sh, HH), m(sy - b, HH)];
 }
 
-// la foto se decodifica antes de dibujarla (si no, la decodificación cae dentro del dibujo y es un fotograma largo)
+// the photo is decoded before drawing it (otherwise decoding happens during the draw and makes a long frame)
 export const cargarFoto = src => new Promise((ok, ko) => {
   const i = new Image(); i.src = src;
   (i.decode ? i.decode() : new Promise((a, b) => { i.onload = a; i.onerror = b; })).then(() => ok(i), ko);

@@ -1,7 +1,7 @@
-/* Texturas del sobre y del reverso de la carta, dibujadas en canvas 2D con las mismas fuentes que la página */
+/* Textures for the pack and the card back, drawn on a 2D canvas with the same fonts as the page */
 import { rrect } from "./carta.js";
 
-// sello de la invitación: disco con degradado, anillo y la F de Faable
+// invite seal: gradient disc, ring and the Faable F
 function emblem2d(x, cx, cy, r){
   x.save();
   const g = x.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
@@ -23,13 +23,13 @@ function rays2d(x, cx, cy, r, color, n, on){
     x.beginPath(); x.moveTo(cx, cy); x.arc(cx, cy, r, a, a + on); x.closePath(); x.fill();
   }
 }
-// fuentes de las texturas (canvas): [familia, peso, estilo]. Hay que esperar a que llegue la hoja de Google Fonts: sin ella
-// document.fonts.load no sabe qué cargar y responde al momento, y lo dibujado se quedaba con la fuente de reserva
-// (pasaba al abrir la app justo tras una actualización, con la caché de fuentes vacía)
+// texture fonts (canvas): [family, weight, style]. We have to wait for the Google Fonts stylesheet: without it
+// document.fonts.load doesn't know what to load and resolves right away, and the drawing kept the fallback font
+// (it happened when opening the app right after an update, with an empty font cache)
 const FUENTES = [["Luckiest Guy", "400"], ["Press Start 2P", "400"], ["Nunito", "900"], ["Nunito", "800"], ["Nunito", "600"], ["Nunito", "700", "italic"]];
 const cargada = ([f, w, s = "normal"]) => [...document.fonts].some(x => x.family.replace(/["']/g, "") === f && x.weight === w && x.style === s && x.status === "loaded");
 export const fuentesCargadas = () => FUENTES.every(cargada);
-// espera a que estén todas (como mucho ms); devuelve si lo están
+// waits until all are loaded (at most ms); returns whether they are
 export async function fuentesListas(ms = 8000){
   const fin = performance.now() + ms;
   for (;;) {
@@ -39,14 +39,14 @@ export async function fuentesListas(ms = 8000){
     await new Promise(r => setTimeout(r, 200));
   }
 }
-// las texturas se dibujan a la densidad real de la pantalla (hasta 3x en iPhone) para que el texto salga nítido;
-// se dibuja en coordenadas de diseño y el lienzo escala
+// textures are drawn at the screen's real pixel density (up to 3x on iPhone) so text comes out sharp;
+// drawing happens in design coordinates and the canvas scales
 export const DPR3 = Math.min(3, devicePixelRatio || 1);
-// escala de una textura para que salga nítida: sobremuestreada respecto a su tamaño en pantalla, porque con mipmaps
-// (y la carta o el sobre inclinados) la GPU mezcla con el nivel de la mitad; en 3x se sobremuestrea menos por memoria
+// texture scale for a sharp result: supersampled relative to its on-screen size, because with mipmaps
+// (and a tilted card or pack) the GPU blends in the half-size level; at 3x it supersamples less to save memory
 export const texScale = (cssWidth, designWidth, max = 3.2) =>
   Math.min(max, Math.max(1, DPR3 * cssWidth / designWidth * (DPR3 >= 3 ? 1.4 : 2)));
-// ancho del sobre con zoom (el de .pack-wrap en styles.css, por el zoom de zoomIn en main.js)
+// width of the zoomed-in pack (.pack-wrap's in styles.css, times zoomIn's zoom in main.js)
 export function packZoomWidth(){
   const w = Math.min(innerWidth * .72, 280, Math.max(120, (innerHeight - 300) * .617));
   return w * Math.min(1.5, innerWidth * .9 / w);
@@ -55,15 +55,15 @@ export function hiCanvas(c, w, h, scale){
   c.width = Math.round(w * scale); c.height = Math.round(h * scale);
   const x = c.getContext("2d"); x.setTransform(scale, 0, 0, scale, 0, 0); return x;
 }
-// escala: por defecto la del sobre con zoom (para rasgar); el selector los pide más pequeños
+// escala: defaults to the zoomed-in pack's (for tearing); the pack picker asks for smaller ones
 export function drawPackFace(c, front, ed, escala = texScale(packZoomWidth(), 512)){
   const W = 512, H = 830, x = hiCanvas(c, W, H, escala), SH = H * .15;
   const g = x.createLinearGradient(0, 0, W * .55, H);
   ed.foil.forEach(([col, o]) => g.addColorStop(front ? o : 1 - o, col));
   x.fillStyle = g; x.fillRect(0, 0, W, H);
   x.textAlign = "center"; x.textBaseline = "middle"; x.lineJoin = "round";
-  // tira de arriba y la costura del corte
-  // tiras selladas de arriba y abajo: costura y rayas del termosellado, como un sobre de verdad
+  // top strip and the tear seam
+  // sealed strips at top and bottom: seam and heat-seal ridges, like a real pack
   const BT = H * .915;
   const sealed = (y0, y1) => { x.fillStyle = "rgba(255,255,255,.12)"; for (let y = y0 + 9; y < y1 - 7; y += 6) x.fillRect(0, y, W, 1.5); };
   sealed(0, SH);
@@ -100,10 +100,10 @@ export function drawPackFace(c, front, ed, escala = texScale(packZoomWidth(), 51
     x.fillStyle = "#111";
     for (let i = 0, px = W / 2 - 100; px < W / 2 + 100; i++) { const w = [2, 4, 1, 3][i % 4]; x.fillRect(px, H * .7 + 8, w, 54); px += w + [3, 2, 4, 2][i % 4]; }
   }
-  // dentado de los extremos: huecos transparentes (alphaTest los recorta en la malla)
+  // serrated ends: transparent gaps (alphaTest cuts them out of the mesh)
   x.globalCompositeOperation = "destination-out";
-  // un número entero de dientes en el ancho: la cara de atrás va girada y sus dientes tienen que caer justo detrás de los
-  // de delante (si no, asoman por los huecos y el borde parece doble)
+  // a whole number of teeth across the width: the back face is rotated and its teeth must sit right behind the
+  // front ones (otherwise they peek through the gaps and the edge looks doubled)
   const tw = W / 20, td = 13;
   x.beginPath();
   for (let a = 0; a < W; a += tw) {
@@ -114,10 +114,10 @@ export function drawPackFace(c, front, ed, escala = texScale(packZoomWidth(), 51
   x.globalCompositeOperation = "source-over";
 }
 export function drawCardBack(c, ed){
-  const W = 512, H = 715, x = hiCanvas(c, W, H, texScale(340, W)); // la carta ocupa como mucho 340px
+  const W = 512, H = 715, x = hiCanvas(c, W, H, texScale(340, W)); // the card takes up at most 340px
   const [borde, centro, fuera] = ed.reverso;
   rrect(x, 0, 0, W, H, 28); x.fillStyle = borde; x.fill();
-  // panel interior con su degradado; los rayos se recortan a él para que el borde quede liso
+  // inner panel with its gradient; the rays are clipped to it so the edge stays clean
   const g = x.createRadialGradient(W / 2, H / 2, 20, W / 2, H / 2, H * .6);
   g.addColorStop(0, centro); g.addColorStop(1, fuera);
   rrect(x, 18, 18, W - 36, H - 36, 14); x.fillStyle = g; x.fill(); x.save(); x.clip();

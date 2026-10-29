@@ -1,14 +1,14 @@
 const $ = s => document.querySelector(s);
 
-/* ===== CONFETI ===== */
+/* ===== CONFETTI ===== */
 const cv = $("#confetti"), ctx = cv.getContext("2d");
 let parts = [], running = false, dpr = 1;
 function size(){ dpr = Math.min(1.5, window.devicePixelRatio || 1); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }
 addEventListener("resize", size); size();
 cv.hidden = true;
 const COLORS = ["#ffcb05","#e3350d","#2a75bb","#ffffff","#2ecc71","#ff6ec7","#7ff3ff"];
-// con el sobre o la carta 3D a la vista, el confeti lo dibuja la GPU en el mismo lienzo (main.js pone el motor);
-// si no (pantallas del quiz, sin WebGL), este canvas 2D
+// while the 3D pack or card is on screen, the GPU draws the confetti on the same canvas (main.js plugs in the engine);
+// otherwise (other screens, no WebGL), this 2D canvas
 let motor3D = null;
 export function usarConfeti3D(fn){ motor3D = fn; }
 export function spawn(x, y, n, spread, dir = -Math.PI / 2, v0 = 7, vr = 11){
@@ -33,7 +33,7 @@ export function confettiBurst(x, y, n){
   spawn(W * .5, H * .45, 70, Math.PI * 1.6);
   setTimeout(() => { spawn(0, H * .85, 45, .6, -Math.PI / 3); spawn(W, H * .85, 45, .6, -Math.PI * 2 / 3); }, 250);
   let rain = 0;
-  // lluvia lenta desde arriba
+  // slow rain from the top
   const iv = setInterval(() => { spawn(Math.random() * W, -20, 5, .6, Math.PI / 2, 2, 3); if (++rain > 19) clearInterval(iv); }, 110);
 }
 function star(r){
@@ -44,8 +44,8 @@ function star(r){
   }
   ctx.closePath(); ctx.fill();
 }
-// barato a propósito: sin save/restore (una transformación directa por pieza), sin listas nuevas por fotograma
-// y física por tiempo real (en pantallas de 120 Hz iba al doble de velocidad)
+// cheap on purpose: no save/restore (one direct transform per piece), no new arrays per frame,
+// and real-time physics (on 120 Hz screens it used to run at double speed)
 let lastTick = 0;
 function tick(now){
   const dt = Math.min(3, (now - lastTick) / 16.67); lastTick = now;
@@ -69,7 +69,7 @@ function tick(now){
   }
   parts.length = n;
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
-  // vacío, fuera de la composición: un lienzo transparente a pantalla completa también cuesta en el móvil
+  // when empty, out of compositing: a full-screen transparent canvas still costs on mobile
   if (n) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
 }
 
