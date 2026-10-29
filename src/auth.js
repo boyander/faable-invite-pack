@@ -45,8 +45,12 @@ export function reclamar(id){
   auth.signInWithOauthConnection({});
 }
 
-// ends the session at the auth server too (the SSO cookie lives on the auth domain)
-export const salir = () => auth.signOut({returnTo: location.origin + "/"});
+// signs out of this app only: the tenant's SSO session stays, so other apps on it (the dashboard, here) keep theirs.
+// The next "Claim" goes back in without asking; signOut() with the default global scope would end them all
+export async function salir(){
+  await auth.signOut({scope: "local"});
+  location.reload();
+}
 
 // what the app can read about the user: the profile from /me and the access token's claims, decoded locally
 export async function claims(){

@@ -9,7 +9,7 @@
         "etiqueta": "Deploy + Auth",
         "mensaje": [
           "3 cards a pack,",
-          "8 to collect"
+          "12 to collect"
         ],
         "dorso": "Invite pack",
         "corto": "Invite",
@@ -127,6 +127,57 @@
           ]
         },
         {
+          "id": "actions",
+          "nombre": "Actions",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "Your code in the login flow",
+          "ataques": [
+            {
+              "nombre": "post-login hook",
+              "texto": "JavaScript that runs before tokens are issued: deny, redirect, or add custom claims.",
+              "dano": "HOBBY",
+              "coste": 1
+            },
+            {
+              "nombre": "Webhooks",
+              "texto": "Signed callbacks when users, logins or teams change.",
+              "coste": 1
+            }
+          ],
+          "pie": "Auth → Actions in the dashboard",
+          "foto": "art/actions.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "grants",
+          "nombre": "OAuth Grants",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "Device code · token exchange",
+          "ataques": [
+            {
+              "nombre": "Device code",
+              "texto": "A \"mycli login\" for terminals, TVs and IoT (RFC 8628).",
+              "coste": 1
+            },
+            {
+              "nombre": "Token exchange",
+              "texto": "Swap a GitHub Actions OIDC token for an access token. No secrets in CI.",
+              "coste": 2
+            }
+          ],
+          "pie": "faable.com/docs/auth/oauth-flows",
+          "foto": "art/grants.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
           "id": "domains",
           "nombre": "Custom Domains",
           "fase": "Faable Deploy",
@@ -196,6 +247,54 @@
           ],
           "pie": "Auth → Security in the dashboard",
           "foto": "art/mfa.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "sso",
+          "nombre": "Enterprise SSO",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "Organizations · Okta · Entra",
+          "rareza": "rara",
+          "ataques": [
+            {
+              "nombre": "Organizations",
+              "texto": "Each customer company gets verified domains and its own OIDC identity provider.",
+              "dano": "PRO",
+              "coste": 2
+            },
+            {
+              "nombre": "Require SSO",
+              "texto": "Users of a verified domain sign in through their company.",
+              "coste": 1
+            }
+          ],
+          "pie": "faable.com/docs/auth/organizations",
+          "foto": "art/sso.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "mcp",
+          "nombre": "MCP Authorization",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "OAuth 2.1 for AI agents",
+          "rareza": "rara",
+          "ataques": [
+            {
+              "nombre": "Protect an MCP server",
+              "texto": "Dynamic client registration for Claude, Cursor and VS Code, a consent screen, per-tool scopes.",
+              "coste": 2
+            }
+          ],
+          "pie": "faable.com/docs/auth/guides/mcp-authorization",
+          "foto": "art/mcp.svg",
           "foco": [
             0.5,
             0.5

@@ -3,7 +3,7 @@
 Open a pack, tear it, flip three cards. Each card is one feature of
 [Faable Deploy](https://faable.com/docs/deploy) or [Faable Auth](https://faable.com/docs/auth),
 and the app itself is a demo of both: it's a static Vite SPA deployed on Faable, and
-claiming a card signs you in with Faable Auth. Collect all eight in the feature
+claiming a card signs you in with Faable Auth. Collect all twelve in the feature
 gallery (📖).
 
 **Live:** https://invite.faable.com _(you don't need an account to open a pack)_
@@ -45,6 +45,10 @@ device you sign in on. The page never talks to a server of its own: everything i
 does goes from the browser to Faable Auth with the user's access token. Open
 **What this app knows about you** after signing in to see the profile and the
 decoded access token claims.
+
+**Sign out** only ends this app's session (`signOut({ scope: "local" })`). The
+tenant's SSO session stays, so other apps on the same tenant keep you signed in.
+The default, `signOut()`, would end the SSO session for all of them.
 
 All of it is in [`src/auth.js`](src/auth.js) (about 60 lines).
 
