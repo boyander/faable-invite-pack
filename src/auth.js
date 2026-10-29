@@ -33,11 +33,8 @@ export const listo = (async () => {
   } catch (e) { console.warn("Faable Auth:", e); }
 })();
 
-// to the hosted login (every connection the app offers); the promise never resolves, the page navigates away
-export function reclamar(id){
-  try { localStorage.setItem(PENDIENTE, id); } catch (e) {}
-  auth.signIn();
-}
+// claiming a card is signing up on the dashboard, in a new tab so the pack stays open; utm_source attributes the signup
+export const REGISTRO = "https://dashboard.faable.com/account/register?utm_source=invite&utm_medium=referral&utm_content=claim_card";
 
 // the dashboard signs in with the same tenant: ?sso=1 sends it to /authorize at once, and the SSO session this app
 // left there brings the user back already signed in, ready to create their first project

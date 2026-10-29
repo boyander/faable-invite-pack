@@ -2,9 +2,8 @@
 
 Open a pack, tear it, flip three cards. Each card is one feature of
 [Faable Deploy](https://faable.com/docs/deploy) or [Faable Auth](https://faable.com/docs/auth),
-and the app itself is a demo of both: it's a static Vite SPA deployed on Faable, and
-claiming a card signs you in with Faable Auth. Collect all twelve in the feature
-gallery (📖).
+and the app itself is a static Vite SPA deployed on Faable. Claiming a card opens the
+Faable sign-up in a new tab. Collect all twelve in the feature gallery (📖).
 
 **Live:** https://invite.faable.com _(you don't need an account to open a pack)_
 
@@ -29,35 +28,12 @@ npx @faable/faable deploy
 There is no `start` script on purpose: with one, Faable would run it as a Node
 process instead of serving the build.
 
-### Faable Auth: sign-in and a profile field, no backend
+### Claiming a card: sign up for Faable
 
 Opening packs is anonymous, and the gallery lives in your browser. **Claim this
-card** on the one you want to keep calls `auth.signIn()`, which sends you to the tenant's hosted
-login (Authorization Code + PKCE, via [`@faable/auth-js`](https://www.npmjs.com/package/@faable/auth-js)),
-and when you come back the card is written to your own profile:
+card** opens `dashboard.faable.com/account/register` in a new tab, so the pack stays
+where it was. The link carries `utm_source=invite` to attribute the signup.
 
-```js
-await auth.updateProfileField("invite_card", "this-app");
-await auth.getProfileField("invite_card"); // "this-app", on any device you sign in on
-```
-
-That lands in `user_metadata["faable.com/fields"]`, so the card follows you to any
-device you sign in on. The page never talks to a server of its own: everything it
-does goes from the browser to Faable Auth with the user's access token. Open
-**What this app knows about you** after signing in to see the profile and the
-decoded access token claims.
-
-**Sign out** is `signOut()`, which in auth-js 3 ends this app's session only: its
-refresh token is revoked and its storage cleared. The tenant's SSO session stays,
-so other apps on the same tenant keep you signed in. `signOut({ scope: "global" })`
-would end it for all of them.
-
-**Continue to your dashboard** links to `dashboard.faable.com/account/login?sso=1`.
-The dashboard signs in with the same tenant, so with the SSO session this page left
-behind it comes back signed in without asking, straight into creating a first
-project.
-
-All of it is in [`src/auth.js`](src/auth.js) (about 60 lines).
 
 What the tenant needs:
 
@@ -95,7 +71,7 @@ client's callback and logout URLs and `http://localhost:5173` to its web origins
 |---|---|
 | `src/main.js` | The flow: cover → pack → three cards → claim |
 | `src/galeria.js`, `src/visor3d.js` | The feature gallery and its 3D card viewer |
-| `src/auth.js` | Faable Auth: session, claim, sign out, claims panel |
+| `src/auth.js` | Faable Auth: session, the sign-up link, sign out, claims panel |
 | `src/pack3d.js`, `src/shaders.js`, `src/material.js` | The 3D pack and holographic card (three.js) |
 | `src/carta.js`, `src/texturas.js` | Card face, pack and card back, drawn on canvas |
 | `src/mazo.js` | Which cards a pack holds (new and common ones come out more often) |

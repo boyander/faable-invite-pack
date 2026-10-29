@@ -595,9 +595,9 @@ function pintarCuenta(){
   const box = $("#cuenta"), e = cuenta.estado, mia = e.reclamada && e.reclamada === carta?.d.id;
   if (!e.on) { box.innerHTML = `<p class="cuenta-txt">Faable Auth isn't configured in this build (<code>src/config.js</code>).</p>`; return; }
   if (!e.user) {
-    box.innerHTML = `<button class="btn" id="reclamar">🔑 Claim this card</button>
-      <p class="cuenta-txt">Sign in with Faable Auth to keep it. Opening packs doesn't need an account.</p>`;
-    $("#reclamar").onclick = () => { SFX.tap(); cuenta.reclamar(carta.d.id); };
+    box.innerHTML = `<a class="btn" id="reclamar" href="${cuenta.REGISTRO}" target="_blank" rel="noopener">🔑 Claim this card</a>
+      <p class="cuenta-txt">Create your Faable account in a new tab. Opening packs doesn't need an account.</p>`;
+    $("#reclamar").onclick = () => SFX.tap();
     return;
   }
   box.innerHTML = `<a class="btn" href="${cuenta.DASHBOARD}">Continue to your dashboard →</a>
