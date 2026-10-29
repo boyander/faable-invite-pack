@@ -1,0 +1,243 @@
+{
+  "_help": "The invite cards. tipo: deploy, auth, cli, shield or normal. rareza: rara (silver, half as often) or especial (holo, a quarter as often); none = common. ataques: one or two features (coste = icons, dano = right-hand label).",
+  "ediciones": [
+    {
+      "id": "invite",
+      "nombre": "Faable Invite",
+      "sobre": {
+        "titulo": "FAABLE INVITE",
+        "etiqueta": "Deploy + Auth",
+        "mensaje": [
+          "One card,",
+          "one feature"
+        ],
+        "dorso": "Invite pack",
+        "corto": "Invite",
+        "colores": [
+          "#7ad3ff",
+          "#5b8cff",
+          "#5b5bf0",
+          "#8a3ff0",
+          "#2a1f6f"
+        ]
+      },
+      "reverso": {
+        "colores": [
+          "#11143a",
+          "#5b5bf0",
+          "#1a1660"
+        ],
+        "texto": "Faable"
+      },
+      "fiesta": {
+        "nota": "",
+        "boton": "↺ Open another pack"
+      },
+      "cartas": [
+        {
+          "id": "push",
+          "nombre": "Push to Deploy",
+          "fase": "Faable Deploy",
+          "tipo": "deploy",
+          "franja": "GitHub · GitLab · zero config",
+          "ataques": [
+            {
+              "nombre": "Connect a repo",
+              "texto": "Every push builds and goes live on <app>.faable.link, with TLS.",
+              "dano": "FREE",
+              "coste": 1
+            },
+            {
+              "nombre": "Zero config",
+              "texto": "Node.js, Python and PHP detected. No Dockerfile needed.",
+              "coste": 1
+            }
+          ],
+          "pie": "Try it at dashboard.faable.com",
+          "foto": "art/push.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "cli",
+          "nombre": "Deploy from the CLI",
+          "fase": "Faable Deploy",
+          "tipo": "cli",
+          "franja": "No repo, no GitHub App",
+          "ataques": [
+            {
+              "nombre": "npx @faable/faable deploy",
+              "texto": "Ships the directory you are in and gives you back a live URL. Nothing to connect first.",
+              "dano": "",
+              "coste": 1
+            }
+          ],
+          "pie": "Run it in any project folder",
+          "foto": "art/cli.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "login",
+          "nombre": "Hosted Login",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "OAuth 2.0 · OpenID Connect",
+          "ataques": [
+            {
+              "nombre": "Universal Login",
+              "texto": "A sign-in page for your users: social providers, email codes, passwords.",
+              "coste": 1
+            },
+            {
+              "nombre": "Standard OIDC",
+              "texto": "Authorization Code + PKCE. Any OIDC library works.",
+              "coste": 1
+            }
+          ],
+          "pie": "Claim this card to try it",
+          "foto": "art/login.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "profile",
+          "nombre": "User Profiles",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "Self-service, no backend",
+          "ataques": [
+            {
+              "nombre": "Account API",
+              "texto": "Users edit their own profile, sessions and linked accounts straight from the browser. This app keeps your card there.",
+              "coste": 1
+            }
+          ],
+          "pie": "Claim this card: it's saved to your profile",
+          "foto": "art/profile.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "domains",
+          "nombre": "Custom Domains",
+          "fase": "Faable Deploy",
+          "tipo": "shield",
+          "franja": "TLS and WAF on every app",
+          "rareza": "rara",
+          "ataques": [
+            {
+              "nombre": "Bring your domain",
+              "texto": "Add it to your app; the TLS certificate is issued for you.",
+              "dano": "FREE",
+              "coste": 1
+            },
+            {
+              "nombre": "WAF",
+              "texto": "A web application firewall in front of every app.",
+              "coste": 1
+            }
+          ],
+          "pie": "Settings → Domains in your app",
+          "foto": "art/domains.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "m2m",
+          "nombre": "Machine Tokens",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "APIs, services and agents",
+          "rareza": "rara",
+          "ataques": [
+            {
+              "nombre": "Client credentials",
+              "texto": "Service-to-service access tokens for your own APIs.",
+              "coste": 1
+            },
+            {
+              "nombre": "Roles & permissions",
+              "texto": "Define an API, its permissions, and roles that grant them.",
+              "coste": 2
+            }
+          ],
+          "pie": "Auth → APIs in the dashboard",
+          "foto": "art/m2m.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "mfa",
+          "nombre": "Second Factor",
+          "fase": "Faable Auth",
+          "tipo": "auth",
+          "franja": "TOTP · passkeys · step-up",
+          "rareza": "rara",
+          "ataques": [
+            {
+              "nombre": "MFA",
+              "texto": "Require a second factor for your tenant, or ask for one only before a sensitive action.",
+              "dano": "HOBBY",
+              "coste": 2
+            }
+          ],
+          "pie": "Auth → Security in the dashboard",
+          "foto": "art/mfa.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "id": "this-app",
+          "nombre": "This Very App",
+          "fase": "Deploy + Auth",
+          "tipo": "normal",
+          "franja": "Open source · static Vite SPA",
+          "rareza": "especial",
+          "colores": {
+            "fondo": [
+              "#f4f0ff",
+              "#d9e8ff"
+            ],
+            "arte": [
+              "#7ad3ff",
+              "#7a2bd8"
+            ]
+          },
+          "ataques": [
+            {
+              "nombre": "Faable Deploy",
+              "texto": "This page is a Vite build, deployed from its GitHub repo.",
+              "coste": 1
+            },
+            {
+              "nombre": "Faable Auth",
+              "texto": "Claim the card and you'll sign in through Faable Auth.",
+              "coste": 1
+            }
+          ],
+          "pie": "github.com/boyander/faable-invite-pack",
+          "foto": "art/this-app.svg",
+          "foco": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    }
+  ]
+}

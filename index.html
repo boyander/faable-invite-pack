@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1030">
+<title>Faable Invite Pack</title>
+<meta name="description" content="Open a pack, get one card: a feature of Faable Deploy or Faable Auth. An open-source static Vite app, deployed on Faable, with sign-in by Faable Auth.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Faable Invite Pack">
+<meta property="og:description" content="Open a pack, get one card. No sign-up needed to open it.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:ital,wght@0,600;0,800;0,900;1,700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="fondo-revelacion" aria-hidden="true"></div>
+<div class="flash" id="flash"></div>
+<button class="mute" id="mute" aria-label="Mute">🔊</button>
+<div class="toast" id="toast" role="status"></div>
+<div class="legend" id="legend" role="status"><b>✦ SPECIAL CARD ✦</b><span>The holo one. Lucky you.</span></div>
+<canvas id="confetti"></canvas>
+<canvas id="pack3d" aria-hidden="true"></canvas>
+
+<!-- 0. COVER: the tap on the button also unlocks audio on mobile -->
+<section class="screen active" id="s-start">
+  <div class="hud"><span class="dot"></span>FAABLE INVITE</div>
+  <div class="radar"><div class="emblem wobble"></div></div>
+  <h1>You've got an invite</h1>
+  <p class="lead" id="lead">One pack, one card: a feature of Faable Deploy or Faable Auth. No sign-up needed to open it.</p>
+  <button class="btn start loading" id="start" disabled><span class="spinner"></span><span id="startLabel">Getting the pack ready…</span></button>
+  <p class="home-links"><a href="https://github.com/boyander/faable-invite-pack">Source on GitHub</a> · <a href="https://github.com/boyander/faable-invite-pack#how-it-uses-faable">How it uses Faable</a></p>
+  <p class="sound-note">🔊 Turn the sound up</p>
+</section>
+
+<section class="screen" id="s-pack">
+  <div class="hud"><span class="dot" style="background:var(--green);box-shadow:0 0 10px var(--green)"></span><span id="packHud">INVITE PACK</span></div>
+  <h1>Your pack</h1>
+  <div class="pack-wrap" id="packScene">
+    <div class="pack-shadow"></div>
+    <div class="pack-float" id="packFloat">
+      <div class="pack" id="pack" role="button" aria-label="Tear the pack open" tabindex="0">
+        <div class="face front">
+          <div class="pack-top foil zig-top" id="packTop"><span>LIMITED EDITION</span></div>
+          <div class="strip" id="strip"></div>
+          <div class="tearline"><div class="rip" id="rip"></div><div class="tip" id="tip"></div><div class="guide"></div></div>
+          <div class="pack-body foil zig-bot">
+            <div class="pack-logo">FAABLE INVITE</div>
+            <div class="pack-emblem"><div class="emblem"></div></div>
+            <div class="pack-label">
+              <small>★ DEPLOY + AUTH ★</small>
+              <b>One card, one feature</b>
+            </div>
+          </div>
+          <div class="puff"></div><div class="spec"><i></i></div>
+          <div class="mouth-lip"></div><div class="flare"></div>
+        </div>
+        <div class="mouth-in"></div>
+        <div class="face back">
+          <div class="pack-top foil zig-top"></div>
+          <div class="pack-body foil zig-bot back-body">
+            <b>INVITE PACK<br>1 CARD</b>
+            <div class="emblem"></div>
+            <div class="barcode"></div>
+          </div>
+          <div class="puff"></div><div class="spec"><i></i></div>
+        </div>
+        <div class="edge l"></div><div class="edge r"></div>
+      </div>
+      <div class="emerge" id="emerge">
+        <div class="card-back"><b>FAABLE<br>INVITE</b><div class="emblem"></div><b>★ 001/001 ★</b></div>
+      </div>
+      <div class="open-light"></div>
+    </div>
+  </div>
+  <div class="hint"><span id="hintText">Tap the pack to open it</span><span class="swipe">👆</span></div>
+</section>
+
+<!-- 2. THE CARD + CLAIM IT -->
+<section class="screen party" id="s-party">
+  <div class="big felicidades" id="felicidades" aria-label="Your invite!"></div>
+  <div class="mano" id="mano" aria-label="Cards in the pack" hidden></div>
+
+  <div class="card-stage" id="cardStage">
+   <div class="flechas" id="flechas" aria-hidden="true"><i class="f-izq"></i><i class="f-der"></i><i class="f-arr"></i></div>
+   <div class="card-fit">
+   <div class="flipper" id="flipper" role="button" aria-label="Flip the card">
+    <div class="card-back" aria-hidden="true">
+      <b>FAABLE<br>INVITE</b>
+      <div class="emblem"></div>
+      <b>★ 001/001 ★</b>
+    </div>
+    <div class="vcard" id="vcard">
+      <canvas class="vc-canvas" id="vcCanvas" aria-label="Your card"></canvas>
+      <div class="glare"></div>
+    </div>
+   </div>
+   </div>
+  </div>
+  <div class="tap-hint" id="tapHint">Tap the card to flip it 👆</div>
+
+  <div class="after" id="after">
+    <p class="note"></p>
+    <div class="cuenta" id="cuenta"></div>
+    <button class="btn ghost" id="replay">↺ Open another pack</button>
+  </div>
+</section>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
