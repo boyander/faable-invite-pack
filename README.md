@@ -8,7 +8,7 @@ gallery (📖).
 
 **Live:** https://invite.faable.com _(you don't need an account to open a pack)_
 
-![A Faable invite pack and three feature cards](public/og.jpg)
+[![A Faable invite pack and three feature cards](public/og.jpg)](https://invite.faable.com/)
 
 ## How it uses Faable
 
