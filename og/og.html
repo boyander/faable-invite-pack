@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Source of public/og.png (the social card): open /og/og.html with `npm run dev` and screenshot it at 1200×630. -->
+<!-- Source of public/og.jpg (the social card): open /og/og.html with `npm run dev` and screenshot it at 1200×630, device scale 2. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -8,7 +8,9 @@
   html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#0b1030}
   body{position:relative;font-family:Nunito,sans-serif;color:#fff;
     background:radial-gradient(90% 90% at 75% 40%,#3a3fbf 0%,transparent 60%),radial-gradient(80% 70% at 10% 110%,#3a1460 0%,transparent 60%),#0b1030}
-  .txt{position:absolute;left:64px;top:92px;width:520px}
+  .txt{position:absolute;left:64px;top:56px;width:520px}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:26px;font:900 34px/1 Nunito,sans-serif;letter-spacing:-.5px}
+  .brand img{width:46px;height:46px}
   .hud{display:inline-block;font:13px "Press Start 2P",monospace;color:#ffcb05;border:3px solid #ffcb05;border-radius:999px;padding:10px 18px}
   h1{margin:26px 0 18px;font:400 78px/0.98 "Luckiest Guy",sans-serif;color:#ffcb05;-webkit-text-stroke:3px #1f3f8f;paint-order:stroke fill;text-shadow:0 6px 0 #1f3f8f}
   p{margin:0;font-size:28px;font-weight:700;line-height:1.3;opacity:.92}
@@ -20,7 +22,8 @@
 <body>
 <div class="stars" id="stars"></div>
 <div class="txt">
-  <span class="hud">FAABLE INVITE</span>
+  <div class="brand"><img src="/logo.svg" alt="">Faable</div>
+  <span class="hud">INVITE PACK</span>
   <h1>Open a pack.<br>Collect features.</h1>
   <p>Faable Deploy + Faable Auth, as a card game. No sign-up to play.</p>
   <div class="url">invite.faable.com · open source</div>
@@ -35,11 +38,11 @@ await fuentesListas();
 const ed = normalizar((await (await fetch("/ediciones.json")).json()).ediciones[0]);
 const card = id => ed.cartas.find(c => c.id === id);
 const place = (c, x, y, w, rot, z) => { Object.assign(c.style, {left: x + "px", top: y + "px", width: w + "px", transform: `rotate(${rot}deg)`, zIndex: z}); document.body.append(c); };
-const pack = document.createElement("canvas"); drawPackFace(pack, true, ed, 1.2); place(pack, 640, 70, 250, -12, 1);
+const pack = document.createElement("canvas"); drawPackFace(pack, true, ed, 2.4); place(pack, 640, 70, 250, -12, 1);
 const cartas = [["login", 790, 120, -2, 2], ["push", 890, 150, 9, 3], ["this-app", 830, 210, 3, 4]];
 for (const [id, x, y, rot, z] of cartas) {
   const d = card(id), c = document.createElement("canvas");
-  drawCarta(c, d, await cargarFoto("/" + d.foto), {num: ed.cartas.indexOf(d) + 1, total: ed.cartas.length, scale: .6});
+  drawCarta(c, d, await cargarFoto("/" + d.foto), {num: ed.cartas.indexOf(d) + 1, total: ed.cartas.length, scale: 1.2});
   place(c, x, y, 240, rot, z);
 }
 document.body.dataset.ready = "1";
